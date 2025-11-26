@@ -1,4 +1,4 @@
-project_path: "C:\\Users\\Krab\\RiderProjects\\airsoftportal-api\\AirsoftPortal" # PATH TO PROJECT
+project_path: "\\" # PATH TO PROJECT
 chunk_size: 800
 chunk_overlap: 100
 model: "llama3.2:3b"
