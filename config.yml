@@ -1,0 +1,6 @@
+project_path: "C:\\Users\\Krab\\RiderProjects\\airsoftportal-api\\AirsoftPortal" # PATH TO PROJECT
+chunk_size: 800
+chunk_overlap: 100
+model: "llama3.2:3b"
+embed_model: "nomic-embed-text"
+excluded_dirs: ["bin", "obj", ".git", "node_modules", "Migrations"]
