@@ -5,3 +5,26 @@ Lightweight AI assistant that explains how application works from user perspecti
 Assistant indexes the project, converts codebase into vector embeddings using `nomic-embed-text` stored in chroma db to provide context aware answers. Local small LLM `llama3.2:3b` is used to answer questions.
 
 Project is purely an experimental playground for testing how a locally running LLM behaves together with basic RAG/embedding techniques.
+
+## Requirements
+
+- Install ollama models from config.yml.
+- Default `llama3.2:3b`, `nomic-embed-text`
+
+## Usage
+
+### 1. Configure
+- set path to project and excluded dirs in config.yml
+- if you need custom template create `prompt_template.custom.md` in project root. This will override default template.
+
+### 2. Index your project
+```bash
+python index.py
+```
+
+### 3. Ask questions
+```bash
+python query.py "How can I change my password"
+
+python query.py "What does the 'revert' button do on user detail?"
+```

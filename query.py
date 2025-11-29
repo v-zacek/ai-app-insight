@@ -1,4 +1,5 @@
 import sys
+import os
 import yaml
 from chromadb import PersistentClient
 from chromadb.config import Settings
@@ -11,6 +12,17 @@ MODEL = cfg["model"]
 
 client = PersistentClient(path="./index")
 collection = client.get_collection(name="source_code")
+
+def load_prompt_template():
+    custom_template = "prompt_template.custom.md"
+    default_template = "prompt_template.md"
+    
+    template_file = custom_template if os.path.exists(custom_template) else default_template
+    
+    with open(template_file, "r", encoding="utf-8") as f:
+        return f.read()
+    
+PROMPT_TEMPLATE = load_prompt_template()
 
 def ollama_chat(prompt):
     result = subprocess.run(
@@ -28,34 +40,19 @@ def ask(query):
 
     context = ""
     for doc, meta in zip(results["documents"][0], results["metadatas"][0]):
-        context += f"\n### From file: {meta['file']}\n{doc}\n"
+        context += f"\n### From file: {meta['file']}\n```\n{doc}\n```\n"
 
-    prompt = f"""
-You are application assistant. You should answer and describe how certain things work in applicaiton from users perspective.
+    prompt = PROMPT_TEMPLATE.format(query=query, context=context)
 
-# STRICT RULES: 
-- DO NOT reveal any source code.
-- DO NOT invent missing information.
-- NEVER describe how code works
-- DO NOT generate any code
-
-# ALWAYS
-- Give short, non-technical, user firendly and practical answers.
-- If something is not possible or you dont know tell that to user and refuse to answer.
-- Stay aligned with given context
-
-QUESTION:
-{query}
-
-CONTEXT:
-{context}
-
-ANSWER:
-"""
-
-    #print(prompt)
+    with open("prompt.log.md", "w", encoding="utf-8") as f:
+        f.write(prompt)
 
     answer = ollama_chat(prompt)
+    
+    with open("prompt.log.md", "a", encoding="utf-8") as f:
+        f.write("\n\n---\n\n# ANSWER\n\n")
+        f.write(answer)
+    
     print(answer)
 
 if __name__ == "__main__":
