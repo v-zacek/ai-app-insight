@@ -1,15 +1,7 @@
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.egg-info/
-.venv/
-venv/
+.idea/*
 
-# IDE
-.idea/
-
-# Custom files
 prompt_template.custom.md
-index/
+index/*
+!index/.gitkeep
 prompt.log.md
+chroma_output.md

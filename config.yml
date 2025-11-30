@@ -1,6 +1,10 @@
 project_path: "\\" # PATH TO PROJECT
-chunk_size: 800
-chunk_overlap: 100
+excluded_dirs: ["bin", "obj", ".git", ".config", ".idea", "node_modules", "Migrations"]
+
+chunk_size: 1200
+chunk_overlap: 200
+
 model: "llama3.2:3b"
 embed_model: "nomic-embed-text"
-excluded_dirs: ["bin", "obj", ".git", "node_modules", "Migrations"]
+
+context_chunks: 6

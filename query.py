@@ -9,6 +9,7 @@ with open("config.yml", "r") as f:
     cfg = yaml.safe_load(f)
 
 MODEL = cfg["model"]
+COTNEXT_CHUNKS = cfg["context_chunks"]
 
 client = PersistentClient(path="./index")
 collection = client.get_collection(name="source_code")
@@ -35,7 +36,7 @@ def ollama_chat(prompt):
 def ask(query):
     results = collection.query(
         query_texts=[query],
-        n_results=8
+        n_results=COTNEXT_CHUNKS
     )
 
     context = ""
