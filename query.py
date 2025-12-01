@@ -1,22 +1,23 @@
 import sys
 import os
-import yaml
 from chromadb import PersistentClient
 from chromadb.config import Settings
 import subprocess
+from config_loader import load_config
+from reranker import rerank_chunks
 
-with open("config.yml", "r") as f:
-    cfg = yaml.safe_load(f)
+cfg = load_config()
 
 MODEL = cfg["model"]
-COTNEXT_CHUNKS = cfg["context_chunks"]
+RERANK_CANDIDATES = cfg["rerank_candidates"]
+RERANK_SELECT = cfg["rerank_select"]
 
 client = PersistentClient(path="./index")
 collection = client.get_collection(name="source_code")
 
 def load_prompt_template():
-    custom_template = "prompt_template.custom.md"
-    default_template = "prompt_template.md"
+    custom_template = os.path.join("prompt", "prompt_template.custom.md")
+    default_template = os.path.join("prompt", "prompt_template.md")
     
     template_file = custom_template if os.path.exists(custom_template) else default_template
     
@@ -34,23 +35,34 @@ def ollama_chat(prompt):
     return result.stdout.decode()
 
 def ask(query):
+    print("Collecting chunks ...")
     results = collection.query(
         query_texts=[query],
-        n_results=COTNEXT_CHUNKS
+        n_results=RERANK_CANDIDATES
     )
 
+    documents = results["documents"][0]
+    metadatas = results["metadatas"][0]
+    
+    print("Reranking chunks ...")
+    if len(documents) > 0:
+        documents, metadatas = rerank_chunks(query, documents, metadatas, MODEL, RERANK_SELECT)
+    
     context = ""
-    for doc, meta in zip(results["documents"][0], results["metadatas"][0]):
+    for doc, meta in zip(documents, metadatas):
         context += f"\n### From file: {meta['file']}\n```\n{doc}\n```\n"
 
     prompt = PROMPT_TEMPLATE.format(query=query, context=context)
 
-    with open("prompt.log.md", "w", encoding="utf-8") as f:
+    os.makedirs("log", exist_ok=True)
+    log_file = os.path.join("log", "prompt.log.md")
+
+    with open(log_file, "w", encoding="utf-8") as f:
         f.write(prompt)
 
     answer = ollama_chat(prompt)
     
-    with open("prompt.log.md", "a", encoding="utf-8") as f:
+    with open(log_file, "a", encoding="utf-8") as f:
         f.write("\n\n---\n\n# ANSWER\n\n")
         f.write(answer)
     

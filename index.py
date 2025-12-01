@@ -1,5 +1,4 @@
 import os
-import yaml
 from chromadb import PersistentClient
 from chromadb.config import Settings
 from chromadb.utils import embedding_functions
@@ -8,9 +7,9 @@ import tree_sitter_javascript as ts_javascript
 import tree_sitter_typescript as ts_typescript
 import tree_sitter_php as ts_php
 from tree_sitter import Language, Parser
+from config_loader import load_config
 
-with open("config.yml", "r") as f:
-    cfg = yaml.safe_load(f)
+cfg = load_config()
 
 PROJECT_PATH = cfg["project_path"]
 CHUNK_SIZE = cfg["chunk_size"]
@@ -157,7 +156,7 @@ def chunk_text(text, size, overlap):
 def is_source_file(path):
     return any(path.endswith(ext) for ext in [
         ".cs", ".php", ".js", ".ts", ".jsx", ".tsx",
-        ".json", ".yml", ".yaml", ".xml", ".sql", ".md"
+        ".json", ".yml", ".yaml", ".xml", ".sql", ".md", ".py"
     ])
 
 

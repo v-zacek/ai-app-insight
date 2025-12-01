@@ -7,4 +7,5 @@ chunk_overlap: 200
 model: "llama3.2:3b"
 embed_model: "nomic-embed-text"
 
-context_chunks: 6
+rerank_candidates: 14
+rerank_select: 6

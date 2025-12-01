@@ -2,7 +2,9 @@
 
 Lightweight AI assistant that explains how application works from user perspective.
 
-Assistant indexes the project, converts codebase into vector embeddings using `nomic-embed-text` stored in chroma db to provide context aware answers. Local small LLM `llama3.2:3b` is used to answer questions.
+Assistant indexes the project, splits codebase into AST based chunks. 
+Chunks are then converted into vector embeddings using `nomic-embed-text` stored in chroma db to provide context aware answers.
+Chunks are then reranked by LLM and used as context for question. Local small LLM `llama3.2:3b` is used to answer questions and rerank chunks.
 
 Project is purely an experimental playground for testing how a locally running LLM behaves together with basic RAG/embedding techniques.
 

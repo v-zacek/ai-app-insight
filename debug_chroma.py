@@ -1,5 +1,6 @@
 import chromadb
 import json
+import os
 from datetime import datetime
 
 client = chromadb.PersistentClient(path="./index")
@@ -37,7 +38,7 @@ for col in client.list_collections():
             md_lines.append(data["documents"][i])
             md_lines.append("\n```\n")
 
-output_file = "chroma_output.md"
+output_file = os.path.join("log", "chroma_output.md");
 with open(output_file, "w", encoding="utf-8") as f:
     f.writelines(md_lines)
 

@@ -1,7 +1,9 @@
 .idea/*
 
+config.local.yml
 prompt_template.custom.md
 index/*
 !index/.gitkeep
-prompt.log.md
+log/*
+!log/.gitkeep
 chroma_output.md
